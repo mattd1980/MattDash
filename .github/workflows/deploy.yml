@@ -25,20 +25,27 @@ jobs:
         run: |
           dotnet publish -c Release -o release/wwwroot
 
-      - name: List published files
+      - name: Prepare deployment files
         run: |
-          echo "Listing files in release/wwwroot:"
-          ls -la release/wwwroot
+          mkdir -p release/deploy
+          cp -R release/wwwroot/wwwroot/* release/deploy/
+          cp release/wwwroot/web.config release/deploy/ || true
+          cp release/wwwroot/MattDash.staticwebassets.endpoints.json release/deploy/ || true
+
+      - name: List deployed files
+        run: |
+          echo "Listing files in release/deploy:"
+          ls -la release/deploy
           echo "\nChecking index.html:"
-          cat release/wwwroot/index.html | grep -i "base href"
+          cat release/deploy/index.html | grep -i "base href"
 
       - name: Create .nojekyll file
-        run: touch release/wwwroot/.nojekyll
+        run: touch release/deploy/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./release/wwwroot
+          publish_dir: ./release/deploy
           publish_branch: gh-pages
           force_orphan: true
