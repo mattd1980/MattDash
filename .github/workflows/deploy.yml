@@ -1,5 +1,10 @@
 name: Deploy to GitHub Pages
 
+permissions:
+  contents: write  # This grants write permissions to the GitHub Actions workflow
+  pages: write
+  id-token: write
+
 on:
   push:
     branches: [ main ]
