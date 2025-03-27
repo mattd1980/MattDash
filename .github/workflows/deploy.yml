@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   deploy:
@@ -16,7 +17,9 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Publish Blazor WebAssembly
-        run: dotnet publish -c Release -o release
+        run: |
+          dotnet publish src/MattDash/MattDash.csproj -c Release -o release/wwwroot
+          cp release/wwwroot/index.html release/wwwroot/404.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -24,3 +27,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./release/wwwroot
           publish_branch: gh-pages
+          force_orphan: true
