@@ -23,10 +23,14 @@ jobs:
 
       - name: Publish Blazor WebAssembly
         run: |
-          dotnet publish MattDash.csproj -c Release -o release/wwwroot
-          mkdir -p release/wwwroot
-          cp bin/Release/net9.0/wwwroot/* release/wwwroot/ || true
-          cp bin/Release/net9.0/wwwroot/index.html release/wwwroot/404.html || true
+          dotnet publish -c Release -o release/wwwroot
+
+      - name: List published files
+        run: |
+          echo "Listing files in release/wwwroot:"
+          ls -la release/wwwroot
+          echo "\nChecking index.html:"
+          cat release/wwwroot/index.html | grep -i "base href"
 
       - name: Create .nojekyll file
         run: touch release/wwwroot/.nojekyll
